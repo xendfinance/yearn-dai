@@ -91,7 +91,7 @@ contract DaiLendingAdapter {
     /*
         account: this is the owner of the Dai token
     */
-    function save(uint256 amount, address account) external {
+    function save(uint256 amount, address account) public {
         //  Give allowance that a spender can spend on behalf of the owner. NOTE: This approve function has to be called from outside this smart contract because if you call
         //  it from the smart contract, it will use the smart contract address as msg.sender which is not what we want,
         //  we want the address with the DAI token to be the one that will be msg.sender. Hence the line below will not work and needs to be called
@@ -111,7 +111,7 @@ contract DaiLendingAdapter {
     //  This function returns your DAI balance + interest. NOTE: There is no function in Yearn finance that gives you the direct balance of DAI
     //  So you have to get it in two steps
 
-    function GetGrossRevenue(address account) external view returns (uint256) {
+    function GetGrossRevenue(address account) public view returns (uint256) {
         //  Get the price per full share
         uint256 price = yDai.getPricePerFullShare();
 
@@ -121,7 +121,7 @@ contract DaiLendingAdapter {
         return balanceShares.mul(price);
     }
 
-    function GetNetRevenue(address account) external view returns (uint256) {
+    function GetNetRevenue(address account) public view returns (uint256) {
         //  Get the price per full share
         uint256 price = yDai.getPricePerFullShare();
 
@@ -135,7 +135,7 @@ contract DaiLendingAdapter {
         return grossBalance.sub(userDaiDepositBalance);
     }
 
-    function Withdraw(uint256 amount, address owner) external {
+    function Withdraw(uint256 amount, address owner) public {
         //  To withdraw our DAI amount, the amount argument is in DAI but the withdraw function of the yDAI expects amount in yDAI token
         //  So we need to find our balance in yDAI
 
