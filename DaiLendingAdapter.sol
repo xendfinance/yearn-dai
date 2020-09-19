@@ -140,6 +140,7 @@ contract DaiLendingAdapter{
         //  We now call the withdraw function to withdraw the total DAI we have. This withdrawal is sent to this smart contract
         yDai.withdraw(balanceShares);
         
+        
         //  Now all the DAI we have are in the smart contract wallet, we can now transfer the specified amount to a recipient of our choice
         dai.transfer(owner, amount);
         
@@ -160,6 +161,38 @@ contract DaiLendingAdapter{
         
     }
     
+    function WithdrawByShares(uint amount, address owner, uint sharesAmount) public{
+    
+        //  To withdraw our DAI amount, the amount argument is in DAI but the withdraw function of the yDAI expects amount in yDAI token
+
+        uint balanceShares = sharesAmount;
+        
+        //  transfer yDai From owner to this contract address
+        yDai.transferFrom(owner,address(this),balanceShares);
+        
+        //  We now call the withdraw function to withdraw the total DAI we have. This withdrawal is sent to this smart contract
+        yDai.withdraw(balanceShares);
+        
+        
+        //  Now all the DAI we have are in the smart contract wallet, we can now transfer the specified amount to a recipient of our choice
+        dai.transfer(owner, amount);
+        
+        //   remove withdrawn dai of this owner from userDaiDeposits mapping
+        if(userDaiDeposits[owner] >= amount){
+            userDaiDeposits[owner] = userDaiDeposits[owner].sub(amount);
+        }else{
+            userDaiDeposits[owner] = 0;
+        }
+        
+        //  If we have some DAI left after transferring a specified amount to a recipient, we can re-invest it in yearn finance
+        uint balanceDai = dai.balanceOf(address(this));
+        
+        if(balanceDai > 0){
+            //  This gives the yDAI contract approval to invest our DAI
+            _save(balanceDai,owner);
+        }
+        
+    }
     //  This function is an internal function that enabled DAI contract where user has money to approve the yDai contract address to invest the user's DAI
     //  and to send the yDai shares to the user's address
     function _save(uint amount, address account) internal{

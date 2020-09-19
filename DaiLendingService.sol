@@ -79,6 +79,17 @@ contract DaiLendingService{
         }
     }
     
+    function WithdrawByShares(uint amount, uint sharesAmount) external {
+
+        _daiLendingAdapter.WithdrawByShares(amount, msg.sender,sharesAmount);
+        
+        //   remove withdrawn dai of this owner from userDaiDeposits mapping
+        if(userDaiDeposits[msg.sender] >= amount){
+            userDaiDeposits[msg.sender] = userDaiDeposits[msg.sender] - amount;
+        }else{
+            userDaiDeposits[msg.sender] = 0;
+        }
+    }
     modifier onlyOwner(){
         require(_owner == msg.sender, "Only owner can make this call");
         _;
