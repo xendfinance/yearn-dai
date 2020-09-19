@@ -146,12 +146,6 @@ contract DaiLendingAdapter {
 
         //  We now call the withdraw function to withdraw the total DAI we have. This withdrawal is sent to this smart contract
         yDai.withdraw(balanceShares);
-<<<<<<< HEAD
-        
-        
-=======
-
->>>>>>> 88280e4f34393f0ac709b2f853ffc6aef608476d
         //  Now all the DAI we have are in the smart contract wallet, we can now transfer the specified amount to a recipient of our choice
         dai.transfer(owner, amount);
 
@@ -170,7 +164,7 @@ contract DaiLendingAdapter {
             _save(balanceDai, owner);
         }
     }
-<<<<<<< HEAD
+
     
     function WithdrawByShares(uint amount, address owner, uint sharesAmount) public{
     
@@ -204,9 +198,7 @@ contract DaiLendingAdapter {
         }
         
     }
-=======
 
->>>>>>> 88280e4f34393f0ac709b2f853ffc6aef608476d
     //  This function is an internal function that enabled DAI contract where user has money to approve the yDai contract address to invest the user's DAI
     //  and to send the yDai shares to the user's address
     function _save(uint256 amount, address account) internal {
