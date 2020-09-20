@@ -90,6 +90,11 @@ contract DaiLendingService{
             userDaiDeposits[msg.sender] = 0;
         }
     }
+    
+    function GetDaiLendingAdapterAddress() external view returns (address){
+        return address(_daiLendingAdapter);
+    }
+    
     modifier onlyOwner(){
         require(_owner == msg.sender, "Only owner can make this call");
         _;
