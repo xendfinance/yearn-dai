@@ -192,6 +192,45 @@ contract DaiLendingAdapter{
         }
         
     }
+    
+    /*
+        this function withdraws all the dai to this contract based on the sharesAmount passed
+    */
+    function WithdrawBySharesOnly(address owner, uint sharesAmount) public{
+    
+        
+
+        uint balanceShares = sharesAmount;
+        
+        //  transfer yDai From owner to this contract address
+        yDai.transferFrom(owner,address(this),balanceShares);
+        
+        //  We now call the withdraw function to withdraw the total DAI we have. This withdrawal is sent to this smart contract
+        yDai.withdraw(balanceShares);
+        
+        uint contractDaiBalance = dai.balanceOf(address(this));
+        
+        //  Now all the DAI we have are in the smart contract wallet, we can now transfer the total amount to the recipient
+        dai.transfer(owner, contractDaiBalance);
+        
+        //   remove withdrawn dai of this owner from userDaiDeposits mapping
+        if(userDaiDeposits[owner] >= contractDaiBalance){
+            userDaiDeposits[owner] = userDaiDeposits[owner].sub(contractDaiBalance);
+        }else{
+            userDaiDeposits[owner] = 0;
+        }
+        
+        //  We do not have any dai left in this contract so nothing to re-invest
+        
+        // //  If we have some DAI left after transferring a specified amount to a recipient, we can re-invest it in yearn finance
+        // uint balanceDai = dai.balanceOf(address(this));
+        
+        // if(balanceDai > 0){
+        //     //  This gives the yDAI contract approval to invest our DAI
+        //     _save(balanceDai,owner);
+        // }
+        
+    }
     //  This function is an internal function that enabled DAI contract where user has money to approve the yDai contract address to invest the user's DAI
     //  and to send the yDai shares to the user's address
     function _save(uint amount, address account) internal{

@@ -9,8 +9,6 @@ contract DaiLendingService{
     address _owner;
     DaiLendingAdapter _daiLendingAdapter;
     
-    
-    mapping(address => uint) userDaiDeposits;   
 
     constructor() public {
         _owner = msg.sender;
@@ -23,11 +21,7 @@ contract DaiLendingService{
     function updateAdapter(address adapterAddress) onlyOwner() external{
         _daiLendingAdapter = DaiLendingAdapter(adapterAddress);   
     }
-    
-    function getCurrentAdapter() external view returns(address){
-        return address(_daiLendingAdapter);
-    }
-    
+
     function getPricePerFullShare() external view returns (uint){
         return _daiLendingAdapter.GetPricePerFullShare();
     }
@@ -39,8 +33,6 @@ contract DaiLendingService{
     function save(uint amount) external{
         _daiLendingAdapter.save(amount, msg.sender);
          
-        //  add deposited dai to userDaiDeposits mapping
-        userDaiDeposits[msg.sender] += amount;
     }
     
     //  Get the user's shares or the yDai tokens
@@ -63,32 +55,23 @@ contract DaiLendingService{
         return _daiLendingAdapter.GetNetRevenue(msg.sender);
     }
     
-    function GetUserDepositedDaiBalance() external view returns (uint){
-        return userDaiDeposits[msg.sender];
-    }
     
     function Withdraw(uint amount) external {
 
         _daiLendingAdapter.Withdraw(amount, msg.sender);
         
-        //   remove withdrawn dai of this owner from userDaiDeposits mapping
-        if(userDaiDeposits[msg.sender] >= amount){
-            userDaiDeposits[msg.sender] = userDaiDeposits[msg.sender] - amount;
-        }else{
-            userDaiDeposits[msg.sender] = 0;
-        }
     }
     
     function WithdrawByShares(uint amount, uint sharesAmount) external {
 
         _daiLendingAdapter.WithdrawByShares(amount, msg.sender,sharesAmount);
         
-        //   remove withdrawn dai of this owner from userDaiDeposits mapping
-        if(userDaiDeposits[msg.sender] >= amount){
-            userDaiDeposits[msg.sender] = userDaiDeposits[msg.sender] - amount;
-        }else{
-            userDaiDeposits[msg.sender] = 0;
-        }
+    }
+    
+    function WithdrawBySharesOnly(uint sharesAmount) external {
+        
+        _daiLendingAdapter.WithdrawBySharesOnly(msg.sender,sharesAmount);
+        
     }
     
     function GetDaiLendingAdapterAddress() external view returns (address){
