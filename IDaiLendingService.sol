@@ -16,4 +16,6 @@ interface IDaiLendingService {
     function GetUserDepositedDaiBalance() external view returns (uint256);
 
     function Withdraw(uint256 amount) external;
+
+    function WithdrawBySharesOnly(uint256 sharesAmount);
 }
