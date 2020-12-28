@@ -17,5 +17,5 @@ interface IDaiLendingService {
 
     function Withdraw(uint256 amount) external;
 
-    function WithdrawBySharesOnly(uint256 sharesAmount);
+    function WithdrawBySharesOnly(uint256 sharesAmount) external;
 }

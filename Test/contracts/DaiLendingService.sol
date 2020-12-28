@@ -12,7 +12,8 @@ contract DaiLendingService {
     }
 
     function transferOwnership(address account) external onlyOwner() {
-        if (_owner != address(0)) _owner = account;
+        require(_owner != address(0), "address cannot be zero");
+        _owner = account;
     }
 
     function updateAdapter(address adapterAddress) external onlyOwner() {
