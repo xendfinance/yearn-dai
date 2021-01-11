@@ -16,9 +16,9 @@ contract DaiLendingAdapter is Ownable, ReentrancyGuard {
 
     using SafeERC20 for IYDaiToken; 
 
-    IDaiToken dai = IDaiToken(0x6B175474E89094C44Da98b954EedeAC495271d0F);
+    IDaiToken immutable dai = IDaiToken(0x6B175474E89094C44Da98b954EedeAC495271d0F);
 
-    IYDaiToken yDai = IYDaiToken(0x16de59092dAE5CcF4A1E6439D611fd0653f0Bd01);
+    IYDaiToken immutable yDai = IYDaiToken(0x16de59092dAE5CcF4A1E6439D611fd0653f0Bd01);
 
     mapping(address => uint256) userDaiDeposits;
 
