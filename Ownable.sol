@@ -1,4 +1,4 @@
-pragma solidity ^0.6.6;
+pragma solidity 0.6.2;
 
 /*
  * Ownable
@@ -29,9 +29,9 @@ contract Ownable {
     }
 
     function transferOwnership(address payable newOwner) public onlyOwner {
-        if (newOwner != address(0)) {
-            owner = newOwner;
-        }
+        require(newOwner != address(0), "address cannot be zero");
+        owner = newOwner;
+
     }
 
     function transferContractOwnership(address payable newServiceContract)

@@ -95,7 +95,7 @@ contract DaiLendingAdapter is Ownable, ReentrancyGuard {
         yDai.safeTransferFrom(owner, address(this), balanceShares);
 
         //  We now call the withdraw function to withdraw the total DAI we have. This withdrawal is sent to this smart contract
-        _withdraw(owner,balanceShares);
+        _withdrawBySharesAndAmount(owner,balanceShares,amount);
 
         //  If we have some DAI left after transferring a specified amount to a recipient, we can re-invest it in yearn finance
         uint256 balanceDai = dai.balanceOf(address(this));
@@ -119,7 +119,7 @@ contract DaiLendingAdapter is Ownable, ReentrancyGuard {
         yDai.safeTransferFrom(owner, address(this), balanceShares);
 
         //  We now call the withdraw function to withdraw the total DAI we have. This withdrawal is sent to this smart contract
-        _withdraw(owner,balanceShares);
+        _withdrawBySharesAndAmount(owner,balanceShares,amount);
 
         //  If we have some DAI left after transferring a specified amount to a recipient, we can re-invest it in yearn finance
         uint256 balanceDai = dai.balanceOf(address(this));
@@ -143,7 +143,7 @@ contract DaiLendingAdapter is Ownable, ReentrancyGuard {
         yDai.safeTransferFrom(owner, address(this), balanceShares);
 
         //  We now call the withdraw function to withdraw the total DAI we have. This withdrawal is sent to this smart contract
-        _withdraw(owner,balanceShares);
+        _withdrawBySharesOnly(owner,balanceShares);
 
 
     }
@@ -168,7 +168,7 @@ contract DaiLendingAdapter is Ownable, ReentrancyGuard {
         userDaiDeposits[account] = userDaiDeposits[account].add(amount);
     }
 
-    function _withdraw(address owner, uint256 balanceShares) internal {
+    function _withdrawBySharesOnly(address owner, uint256 balanceShares) internal {
 
         //  We now call the withdraw function to withdraw the total DAI we have. This withdrawal is sent to this smart contract
         yDai.withdraw(balanceShares);
@@ -182,6 +182,24 @@ contract DaiLendingAdapter is Ownable, ReentrancyGuard {
         if (userDaiDeposits[owner] >= contractDaiBalance) {
             userDaiDeposits[owner] = userDaiDeposits[owner].sub(
                 contractDaiBalance
+            );
+        } else {
+            userDaiDeposits[owner] = 0;
+        }
+    }
+
+    function _withdrawBySharesAndAmount(address owner, uint256 balanceShares, uint256 amount) internal {
+
+        //  We now call the withdraw function to withdraw the total DAI we have. This withdrawal is sent to this smart contract
+        yDai.withdraw(balanceShares);
+
+        //  Now all the DAI we have are in the smart contract wallet, we can now transfer the total amount to the recipient
+        dai.safeTransfer(owner, amount);
+
+        //   remove withdrawn dai of this owner from userDaiDeposits mapping
+        if (userDaiDeposits[owner] >= amount) {
+            userDaiDeposits[owner] = userDaiDeposits[owner].sub(
+                amount
             );
         } else {
             userDaiDeposits[owner] = 0;
